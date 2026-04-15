@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filling Form</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        select {
+            background-color: white;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="file"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+
+        input[type="file"] {
+            padding: 8px 0;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .preview-container.show {
+            display: block;
+        }
+
+        .preview-container img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            margin-bottom: 10px;
+        }
+
+        .preview-container p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .form-message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .form-message.success {
+            display: block;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-message.error {
+            display: block;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #detailsSummary {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        #detailsSummary h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #detailsSummary div {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        #detailsSummary p {
+            margin-bottom: 10px;
+        }
+
+        #detailsSummary img {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-graduate"></i> Filling Form</h1>
+            <p>Please fill in your information below</p>
+        </div>
+
+        <div id="messageContainer" class="form-message"></div>
+        <div id="loadingContainer" class="loading">
+            <div class="spinner"></div>
+            <span>Submitting form...</span>
+        </div>
+
+        <form id="studentForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name">
+                    Full Name <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name"
+                    placeholder="Enter your full name" 
+                    required
+                />
+            </div>
+
+            <!-- Roll Number Field -->
+            <div class="form-group">
+                <label for="rollnumber">
+                    Roll Number <span class="required">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="rollnumber" 
+                    name="rollnumber"
+                    placeholder="Enter your roll number" 
+                    required
+                />
+            </div>
+
+            <!-- Payment Details Field -->
+            <div class="form-group">
+                <label for="payment">
+                    Payment Details <span class="required">*</span>
+                </label>
+                <select id="payment" name="payment" required>
+                    <option value="">-- Select Payment Method --</option>
+                    <option value="PhonePe">PhonePe</option>
+                    <option value="PayTM">PayTM</option>
+                </select>
+            </div>
+
+            <!-- Photo Upload Field -->
+            <div class="form-group">
+                <label for="photo">
+                    Upload Photo <span class="required">*</span>
+                </label>
+                <div class="file-input-wrapper">
+                    <input 
+                        type="file" 
+                        id="photo" 
+                        name="photo"
+                        accept="image/*" 
+                        required
+                    />
+                </div>
+                <div id="previewContainer" class="preview-container">
+                    <img id="photoPreview" alt="Photo preview">
+                    <p id="fileName"></p>
+                    <p style="color: #555; font-size: 13px; margin-top: 8px;">After clicking submit, WhatsApp will open with your details. Please attach the uploaded photo manually before sending.</p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-check-circle"></i> Submit Details
+                </button>
+                <button type="reset" class="reset-btn">
+                    <i class="fas fa-redo"></i> Clear
+                </button>
+            </div>
+        </form>
+
+        <!-- Details Summary Section -->
+        <div id="detailsSummary">
+            <h3><i class="fas fa-check-circle" style="color: #28a745;"></i> Submitted Details</h3>
+            <div>
+                <p><strong>Name:</strong> <span id="displayName"></span></p>
+                <p><strong>Roll Number:</strong> <span id="displayRollNumber"></span></p>
+                <p><strong>Payment Method:</strong> <span id="displayPayment"></span></p>
+                <div id="displayPhoto" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('studentForm');
+        const messageContainer = document.getElementById('messageContainer');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const photoInput = document.getElementById('photo');
+        const previewContainer = document.getElementById('previewContainer');
+        const photoPreview = document.getElementById('photoPreview');
+        const fileName = document.getElementById('fileName');
+        const detailsSummary = document.getElementById('detailsSummary');
+
+        // Photo preview functionality
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    photoPreview.src = event.target.result;
+                    fileName.textContent = file.name;
+                    previewContainer.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            loadingContainer.classList.add('show');
+            messageContainer.style.display = 'none';
+
+            const name = document.getElementById('name').value.trim();
+            const rollnumber = document.getElementById('rollnumber').value.trim();
+            const payment = document.getElementById('payment').value.trim();
+            const photoFile = photoInput.files[0];
+
+            if (!name || !rollnumber || !payment || !photoFile) {
+                loadingContainer.classList.remove('show');
+                showMessage('Please fill in all fields and upload a photo', 'error');
+                return;
+            }
+
+            const whatsappText = encodeURIComponent(
+                `Hello, here are my details:\nName: ${name}\nRoll Number: ${rollnumber}\nPayment Method: ${payment}\n\nPlease attach the uploaded photo when WhatsApp opens.`
+            );
+            const whatsappUrl = `https://wa.me/916309369021?text=${whatsappText}`;
+
+            loadingContainer.classList.remove('show');
+            showMessage('Opening WhatsApp chat with your details... please attach the photo manually.', 'success');
+            displayDetails(name, rollnumber, payment, photoPreview.src);
+            window.open(whatsappUrl, '_blank');
+        });
+
+        function displayDetails(name, rollnumber, payment, photoUrl) {
+            document.getElementById('displayName').textContent = name;
+            document.getElementById('displayRollNumber').textContent = rollnumber;
+            document.getElementById('displayPayment').textContent = payment;
+            document.getElementById('displayPhoto').innerHTML = `\n                <p><strong>Photo:</strong></p>\n                <img src="${photoUrl}" style="max-width: 150px; height: auto; border-radius: 8px; border: 2px solid #667eea;">\n            `;
+            detailsSummary.style.display = 'block';
+        }
+
+        function showMessage(text, type) {
+            messageContainer.textContent = text;
+            messageContainer.className = 'form-message ' + type;
+            messageContainer.style.display = 'block';
+        }
+
+        // Clear message when user starts typing
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('focus', () => {
+                messageContainer.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
